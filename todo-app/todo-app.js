@@ -1,12 +1,4 @@
-let todos = []
-
-const todosJSON = localStorage.getItem('todos')
-
-if (todosJSON !== null){
-    todos = JSON.parse(todosJSON)
-}
-
-
+const todos = getSavedTodos()
 
 const sortTodos = function(todos){
     todos.sort(function(a, b){
@@ -31,28 +23,6 @@ const createTodo = function(input){
     document.querySelector("#todos").appendChild(todoP)
 }
 
-const renderTodos = function(todos, filters){
-    document.querySelector("#todos").innerHTML = ''
-
-    const filteredTodos = todos.filter(function(todo){
-        const searchTextMatch = todo.text.toLowerCase().includes(filters.searchText.toLowerCase())
-        const hideCompletedMatch = !filters.hideCompleted || !todo.body
-        return searchTextMatch && hideCompletedMatch
-    })
-
-    const todosLeft = todos.filter(function(todo){
-        return !todo.body
-    })
-
-    const summaryP = document.createElement('h2')
-    summaryP.textContent = `You have ${todosLeft.length} left.`
-    document.querySelector('#todos').appendChild(summaryP)
-
-    filteredTodos.forEach(function(todo){
-        createTodo(`${todo.text}.`)
-    })
-}
-
 renderTodos(todos, filters)
 
 document.querySelector('#search-text').addEventListener('input', function(e){
@@ -68,7 +38,7 @@ document.querySelector('#add-todo').addEventListener('submit', function(e){
             body: false
         }
         todos.push(newTodo)
-        localStorage.setItem('todos', JSON.stringify(todos))
+        saveTodos(todos)
         e.target.elements.newTodo.value = ''
     }
     renderTodos(todos, filters)
